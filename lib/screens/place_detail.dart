@@ -12,11 +12,15 @@ class PlaceDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(place.title),
       ),
-      body: Center(
-        child: Text(
-          'Details of the selected place will be shown here.',
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+      body: Stack(
+        children: [
+          Image.file(
+            place.image,
+            width: double.infinity,
+            height: 250,
+            fit: BoxFit.cover,
+          ),
+        ],
       ),
     );
   }
