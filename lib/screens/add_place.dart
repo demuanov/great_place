@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:great_place/models/place.dart';
 import 'package:great_place/providers/user_places.dart';
 import 'package:great_place/widgets/image_input.dart';
+import 'package:great_place/widgets/location_input.dart';
 
 class AddPlaceScreen extends ConsumerStatefulWidget {
   const AddPlaceScreen({super.key});
@@ -16,6 +17,7 @@ class AddPlaceScreen extends ConsumerStatefulWidget {
 class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   final _titleController = TextEditingController();
   File? _selectedImage;
+  PlaceLocation? _selectedLocation;
 
   @override
   void dispose() {
@@ -29,10 +31,7 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
       return;
     }
     ref.read(userPlacesProvider.notifier).addPlace(
-          Place(
-            title: enteredTitle,
-            image: _selectedImage!, // Placeholder for image path
-          ),
+          Place(title: enteredTitle, image: _selectedImage!, location: _selectedLocation!),
         );
     Navigator.of(context).pop();
   }
@@ -58,6 +57,10 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
               _selectedImage = image;
             }),
             const SizedBox(height: 10),
+            LocationInput(onSelectLocation: (location) {
+              _selectedLocation = location;
+            }),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
                 onPressed: _savePlace,
                 icon: const Icon(Icons.add),
