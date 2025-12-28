@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:great_place/models/place.dart';
 import 'package:great_place/providers/user_places.dart';
@@ -25,15 +26,34 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
     super.dispose();
   }
 
-  void _savePlace() {
+  Future<void> _savePlace() async {
     final enteredTitle = _titleController.text;
     if (enteredTitle.isEmpty) {
       return;
     }
-    ref.read(userPlacesProvider.notifier).addPlace(
-          Place(title: enteredTitle, image: _selectedImage!, location: _selectedLocation!),
+
+    try {
+      await ref.read(userPlacesProvider.notifier).addPlace(
+            Place(
+              title: enteredTitle,
+              image: _selectedImage!,
+              location: _selectedLocation!,
+            ),
         );
+
+      if (!mounted) return;
     Navigator.of(context).pop();
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.message ??
+                'Failed to access device storage path (path_provider).',
+          ),
+        ),
+      );
+    }
   }
 
   @override
