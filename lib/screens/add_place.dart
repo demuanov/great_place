@@ -39,10 +39,10 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
               image: _selectedImage!,
               location: _selectedLocation!,
             ),
-        );
+          );
 
       if (!mounted) return;
-    Navigator.of(context).pop();
+      Navigator.of(context).pop();
     } on PlatformException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

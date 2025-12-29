@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:great_place/config/app_secrets.dart';
 import 'package:great_place/models/place.dart';
 import 'package:great_place/screens/map.dart';
 import 'package:http/http.dart' as http;
@@ -21,19 +22,25 @@ class _LocationInputState extends State<LocationInput> {
   PlaceLocation? _pickedLocation;
   var _isGettingLocation = false;
 
+  String get _googleMapsApiKey {
+    return AppSecrets.hasGoogleMapsApiKey
+        ? AppSecrets.googleMapsApiKey
+        : (dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '').trim();
+  }
+
   String get locationImage {
     if (_pickedLocation == null) {
       return '';
     }
     final lat = _pickedLocation!.latitude;
     final lng = _pickedLocation!.longitude;
-    final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
+    final apiKey = _googleMapsApiKey;
     return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=13&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=$apiKey';
   }
 
   Future<void> _savePlace(
       double latitude, double longitude, String address) async {
-    final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
+    final apiKey = _googleMapsApiKey;
 
     final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey');
